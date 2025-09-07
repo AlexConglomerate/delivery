@@ -23,6 +23,15 @@ public class LocationShould
         yield return [5, 7];
     }
 
+    public static IEnumerable<object[]> GetInvalidLocations()
+    {
+        yield return [0, 0];
+        yield return [-1, 1];
+        yield return [11, 1];
+        yield return [1, -1];
+        yield return [1, 11];
+    }
+
     [Theory]
     [MemberData(nameof(GetValidLocations))]
     public void CreateValidLocation(int x, int y)
@@ -34,12 +43,7 @@ public class LocationShould
     }
 
     [Theory]
-    [InlineData(0, 5)]
-    [InlineData(11, 5)]
-    [InlineData(-5, 5)]
-    [InlineData(5, -5)]
-    [InlineData(5, 0)]
-    [InlineData(5, 11)]
+    [MemberData(nameof(GetInvalidLocations))]
     public void CreateInvalidLocation(int x, int y)
     {
         var location = Location.Create(x, y);
@@ -71,7 +75,7 @@ public class LocationShould
     }
 
     [Fact]
-    public void CreateRandom()
+    public void CreateRandomLocation()
     {
         var location = Location.CreateRandom();
 

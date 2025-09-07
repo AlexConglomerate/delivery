@@ -13,12 +13,19 @@ public sealed class Location : ValueObject
     public static Location MaxLocation => new(10, 10);
 
     [ExcludeFromCodeCoverage]
-    private Location() { } // For EF Core
+    private Location() { }
 
     private Location(int x, int y)
     {
         X = x;
         Y = y;
+    }
+
+    [ExcludeFromCodeCoverage]
+    protected override IEnumerable<IComparable> GetEqualityComponents()
+    {
+        yield return X;
+        yield return Y;
     }
 
     public static Result<Location, Error> Create(int x, int y)
@@ -27,15 +34,6 @@ public sealed class Location : ValueObject
         if (y < MinLocation.X || y > MaxLocation.Y) return GeneralErrors.ValueIsInvalid(nameof(y));
 
         return new Location(x, y);
-    }
-
-    public static Location CreateRandom()
-    {
-        var rnd = new Random(Guid.NewGuid().GetHashCode());
-        var x = rnd.Next(MinLocation.X, MaxLocation.X + 1);
-        var y = rnd.Next(MinLocation.Y, MaxLocation.Y + 1);
-        var location = Create(x, y).Value;
-        return location;
     }
 
     public Result<int, Error> DistanceTo(Location target)
@@ -47,10 +45,12 @@ public sealed class Location : ValueObject
         return distance;
     }
 
-    [ExcludeFromCodeCoverage]
-    protected override IEnumerable<IComparable> GetEqualityComponents()
+    public static Location CreateRandom()
     {
-        yield return X;
-        yield return Y;
+        var rnd = new Random(Guid.NewGuid().GetHashCode());
+        var x = rnd.Next(MinLocation.X, MaxLocation.X + 1);
+        var y = rnd.Next(MinLocation.Y, MaxLocation.Y + 1);
+        var location = Create(x, y).Value;
+        return location;
     }
 }
