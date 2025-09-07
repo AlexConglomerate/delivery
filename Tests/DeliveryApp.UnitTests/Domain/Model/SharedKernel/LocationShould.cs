@@ -14,7 +14,7 @@ public class LocationShould
     public void CreateLocation_WhenCoordinatesAreWithinRange(int x, int y)
     {
         // Act
-        var location = new Location(x, y);
+        var location = Location.Create(x, y);
 
         // Assert
         location.X.Should().Be(x);
@@ -29,7 +29,7 @@ public class LocationShould
     public void ThrowException_WhenCoordinatesAreOutOfRange(int x, int y)
     {
         // Act
-        Action act = () => new Location(x, y);
+        Action act = () => Location.Create(x, y);
 
         // Assert
         act.Should().Throw<ArgumentOutOfRangeException>();
@@ -39,7 +39,7 @@ public class LocationShould
     public void BeImmutable()
     {
         // Arrange
-        var location = new Location(3, 4);
+        var location = Location.Create(3, 4);
 
         // Act
         Action act = () => { var _ = location.X + location.Y; };

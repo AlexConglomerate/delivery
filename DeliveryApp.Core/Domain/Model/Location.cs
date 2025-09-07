@@ -12,13 +12,20 @@ public sealed class Location : ValueObject
     private const int MinCoordinate = 1;
     private const int MaxCoordinate = 10;
 
-    public Location(int x, int y)
+    private Location() { } // For EF Core
+
+    private Location(int x, int y)
+    {
+        X = x;
+        Y = y;
+    }
+
+    public static Location Create(int x, int y)
     {
         if (x < MinCoordinate || x > MaxCoordinate) throw new ArgumentOutOfRangeException(nameof(x), $"X должен быть от {MinCoordinate} до {MaxCoordinate}");
         if (y < MinCoordinate || y > MaxCoordinate) throw new ArgumentOutOfRangeException(nameof(y), $"Y должен быть от {MinCoordinate} до {MaxCoordinate}");
 
-        X = x;
-        Y = y;
+        return new Location(x, y);
     }
 
 
