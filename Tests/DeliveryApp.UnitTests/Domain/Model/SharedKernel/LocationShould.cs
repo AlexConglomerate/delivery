@@ -48,4 +48,14 @@ public class LocationShould
         location.X.Should().Be(3);
         location.Y.Should().Be(4);
     }
+
+    [Fact]
+    public void CreateRandom()
+    {
+        var location = Location.CreateRandom();
+
+        // Assert
+        location.X.Should().BeInRange(Location.MinLocation.X, Location.MaxLocation.Y);
+        location.Y.Should().BeInRange(Location.MinLocation.X, Location.MaxLocation.Y);
+    }
 }
