@@ -9,9 +9,6 @@ public sealed class Location : ValueObject
     public int X { get; }
     public int Y { get; }
 
-    private const int MinCoordinate = 1;
-    private const int MaxCoordinate = 10;
-
     public static Location MinLocation => new(1, 1);
     public static Location MaxLocation => new(10, 10);
 
@@ -24,10 +21,10 @@ public sealed class Location : ValueObject
         Y = y;
     }
 
-    public static Location Create(int x, int y)
+    public static Result<Location, Error> Create(int x, int y)
     {
-        if (x < MinCoordinate || x > MaxCoordinate) throw new ArgumentOutOfRangeException(nameof(x), $"X должен быть от {MinCoordinate} до {MaxCoordinate}");
-        if (y < MinCoordinate || y > MaxCoordinate) throw new ArgumentOutOfRangeException(nameof(y), $"Y должен быть от {MinCoordinate} до {MaxCoordinate}");
+        if (x < MinLocation.X || x > MaxLocation.Y) return GeneralErrors.ValueIsInvalid(nameof(x));
+        if (y < MinLocation.X || y > MaxLocation.Y) return GeneralErrors.ValueIsInvalid(nameof(y));
 
         return new Location(x, y);
     }
@@ -37,7 +34,7 @@ public sealed class Location : ValueObject
         var rnd = new Random(Guid.NewGuid().GetHashCode());
         var x = rnd.Next(MinLocation.X, MaxLocation.X + 1);
         var y = rnd.Next(MinLocation.Y, MaxLocation.Y + 1);
-        var location = Create(x, y);
+        var location = Create(x, y).Value;
         return location;
     }
 
