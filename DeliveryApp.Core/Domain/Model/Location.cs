@@ -38,6 +38,14 @@ public sealed class Location : ValueObject
         return location;
     }
 
+    public Result<int, Error> DistanceTo(Location target)
+    {
+        if (target == null) return GeneralErrors.ValueIsRequired(nameof(target));
+        var diffX = Math.Abs(X - target.X);
+        var diffY = Math.Abs(Y - target.Y);
+        var distance = diffX + diffY;
+        return distance;
+    }
 
     [ExcludeFromCodeCoverage]
     protected override IEnumerable<IComparable> GetEqualityComponents()
