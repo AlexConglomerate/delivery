@@ -15,23 +15,22 @@ public class StoragePlace : Entity<Guid>
     {
     }
 
-    private StoragePlace(String Name, int TotalVolume, Guid OrderId) : this()
+    private StoragePlace(string name, int totalVolume) : this()
     {
         Id = Guid.NewGuid();
-        Name = Name;
-        TotalVolume = TotalVolume;
-        OrderId = OrderId;
+        Name = name;
+        TotalVolume = totalVolume;
     }
 
-    public String Name { get; private set; }
-    public String TotalVolume { get; private set; }
-    public String OrderId { get; private set; }
+    public string Name { get; private set; }
+    public int TotalVolume { get; private set; }
+    public Guid? OrderId { get; private set; }
 
-    // public static Result<Item, Error> Create(Good good, int quantity)
-    // {
-    //     if (good == null) return GeneralErrors.ValueIsRequired(nameof(good));
-    //     if (quantity <= 0) return GeneralErrors.ValueIsInvalid(nameof(quantity));
+    public static Result<StoragePlace, Error> Create(string name, int volume)
+    {
+        if (string.IsNullOrEmpty(name)) return GeneralErrors.ValueIsRequired(nameof(name));
+        if (volume <= 0) return GeneralErrors.ValueIsInvalid(nameof(volume));
 
-    //     return new Item(good, quantity);
-    // }
+        return new StoragePlace(name, volume);
+    }
 }
