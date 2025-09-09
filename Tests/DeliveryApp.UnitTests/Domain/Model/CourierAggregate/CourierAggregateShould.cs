@@ -2,6 +2,7 @@ using FluentAssertions;
 using Xunit;
 using DeliveryApp.Core.Domain.Model.CourierAggregate;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 
 namespace DeliveryApp.UnitTests.Domain.Model.CourierAggregate;
 
@@ -59,8 +60,8 @@ public class CourierAggregateShould
         storage.CanStore(0).IsFailure.Should().BeTrue();
         storage.CanStore(-1).IsFailure.Should().BeTrue();
 
-        storage.CanStore(5).IsSuccess.Should().BeTrue();
-        storage.CanStore(10).IsSuccess.Should().BeTrue();
-        storage.CanStore(11).IsSuccess.Should().BeTrue();
+        storage.CanStore(5).Value.Should().BeTrue();
+        storage.CanStore(10).Value.Should().BeTrue();
+        storage.CanStore(11).Value.Should().BeFalse();
     }
 }
