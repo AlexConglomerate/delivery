@@ -2,22 +2,12 @@ using FluentAssertions;
 using Xunit;
 using DeliveryApp.Core.Domain.Model.CourierAggregate;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using System;
 
 namespace DeliveryApp.UnitTests.Domain.Model.CourierAggregate;
 
 public class CourierAggregateShould
 {
-    // public static IEnumerable<object[]> GetLocationsForDistance()
-    // {
-    //     yield return [Location.Create(1, 1).Value, 0];
-    //     yield return [Location.Create(1, 2).Value, 1];
-    //     yield return [Location.Create(2, 1).Value, 1];
-    //     yield return [Location.Create(2, 2).Value, 2];
-    //     yield return [Location.Create(10, 10).Value, 18];
-    // }
-
     public static IEnumerable<object[]> GetValidLocations()
     {
         yield return ["bagazhnik", 1];
@@ -63,6 +53,7 @@ public class CourierAggregateShould
 
         storage.CanStore(5).Value.Should().BeTrue();
         storage.CanStore(10).Value.Should().BeTrue();
+        
         storage.CanStore(11).Value.Should().BeFalse();
     }
 
