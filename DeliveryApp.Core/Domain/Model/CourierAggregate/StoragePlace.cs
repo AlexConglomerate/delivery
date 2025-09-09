@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using CSharpFunctionalExtensions;
 using Primitives;
 
-namespace DeliveryApp.Core.Domain.Model.CourierAggregate;
+namespace DeliveryApp.Core.Domain.Model.StoragePlace;
 
 /// <summary>
 ///     Место хранения курьера (рюкзак, багажник и т.п.)
@@ -33,13 +33,10 @@ public class StoragePlace : Entity<Guid>
         return new StoragePlace(name, volume);
     }
 
-    /// <summary>
-    ///     Занято ли?
-    /// </summary>
-    /// <returns>Да/Нет</returns>
     private bool IsOccupied()
     {
-        return OrderId != null;
+        var isOccupied = OrderId != null;
+        return isOccupied;
     }
 
     public Result<bool, Error> CanStore(int volume)

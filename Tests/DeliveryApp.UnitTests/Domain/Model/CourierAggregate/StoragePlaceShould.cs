@@ -1,15 +1,14 @@
 using FluentAssertions;
 using Xunit;
-using DeliveryApp.Core.Domain.Model.CourierAggregate;
 using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Reflection;
 using CSharpFunctionalExtensions;
 
-namespace DeliveryApp.UnitTests.Domain.Model.CourierAggregate;
+namespace DeliveryApp.UnitTests.Domain.Model.StoragePlace;
 
-public class CourierAggregateShould
+public class StoragePlaceShould
 {
     public static IEnumerable<object[]> GetValidLocations()
     {
@@ -29,14 +28,14 @@ public class CourierAggregateShould
     [Fact]
     public void DerivedEntity()
     {
-        var isDerivedEntity = typeof(StoragePlace).IsSubclassOf(typeof(Entity<Guid>));
+        var isDerivedEntity = typeof(Core.Domain.Model.StoragePlace.StoragePlace).IsSubclassOf(typeof(Entity<Guid>));
         isDerivedEntity.Should().BeTrue();
     }
 
     [Fact]
     public void ConstructorShouldBePrivate()
     {
-        var typeInfo = typeof(StoragePlace).GetTypeInfo();
+        var typeInfo = typeof(Core.Domain.Model.StoragePlace.StoragePlace).GetTypeInfo();
         typeInfo.DeclaredConstructors.All(x => x.IsPrivate).Should().BeTrue();
     }
 
@@ -44,26 +43,26 @@ public class CourierAggregateShould
     [MemberData(nameof(GetValidLocations))]
     public void CreateValidStoragePlace(string name, int volume)
     {
-        var location = StoragePlace.Create(name, volume).Value;
+        var storage = Core.Domain.Model.StoragePlace.StoragePlace.Create(name, volume).Value;
 
-        location.Name.Should().Be(name);
-        location.TotalVolume.Should().Be(volume);
+        storage.Name.Should().Be(name);
+        storage.TotalVolume.Should().Be(volume);
     }
 
     [Theory]
     [MemberData(nameof(GetInvalidLocations))]
     public void CreateInValidStoragePlace(string name, int volume)
     {
-        var location = StoragePlace.Create(name, volume);
+        var storage = Core.Domain.Model.StoragePlace.StoragePlace.Create(name, volume);
 
-        location.IsSuccess.Should().BeFalse();
-        location.Error.Should().NotBeNull();
+        storage.IsSuccess.Should().BeFalse();
+        storage.Error.Should().NotBeNull();
     }
 
     [Fact]
     public void CanStore()
     {
-        var storage = StoragePlace.Create("name", 10).Value;
+        var storage = Core.Domain.Model.StoragePlace.StoragePlace.Create("name", 10).Value;
 
         storage.CanStore(0).IsFailure.Should().BeTrue();
         storage.CanStore(-1).IsFailure.Should().BeTrue();
@@ -77,22 +76,16 @@ public class CourierAggregateShould
     [Fact]
     public void Store()
     {
-        var storage = StoragePlace.Create("name", 10).Value;
         var orderId = Guid.NewGuid();
+        var storage = Core.Domain.Model.StoragePlace.StoragePlace.Create("bagazhnik", 10).Value;
 
-        var err1 = storage.Store(0, orderId);
-        err1.IsFailure.Should().BeTrue();
+        storage.Store(0, orderId).IsFailure.Should().BeTrue();
+        storage.Store(-10, orderId).IsFailure.Should().BeTrue();
+        storage.Clear(orderId).IsFailure.Should().BeTrue();
 
-        var err2 = storage.Store(-10, orderId);
-        err2.IsFailure.Should().BeTrue();
+        storage.Store(5, orderId).IsSuccess.Should().BeTrue();
+        storage.Clear(orderId).IsSuccess.Should().BeTrue();
 
-        var err3 = storage.Clear(orderId);
-        err3.IsFailure.Should().BeTrue();
-
-        var addedToStorage = storage.Store(5, orderId);
-        addedToStorage.IsSuccess.Should().BeTrue();
-
-        var cleared = storage.Clear(orderId);
-        cleared.IsSuccess.Should().BeTrue();
+        storage.Clear(orderId).IsFailure.Should().BeTrue();
     }
 }
