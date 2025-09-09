@@ -51,54 +51,16 @@ public class CourierAggregateShould
         location.Error.Should().NotBeNull();
     }
 
-    // [Theory]
-    // [MemberData(nameof(GetValidLocations))]
-    // public void CreateValidLocation(int x, int y)
-    // {
-    //     var location = Location.Create(x, y).Value;
+    [Fact]
+    public void CanStore()
+    {
+        var storage = StoragePlace.Create("name", 10).Value;
 
-    //     location.X.Should().Be(x);
-    //     location.Y.Should().Be(y);
-    // }
+        storage.CanStore(0).IsFailure.Should().BeTrue();
+        storage.CanStore(-1).IsFailure.Should().BeTrue();
 
-    // [Theory]
-    // [MemberData(nameof(GetInvalidLocations))]
-    // public void CreateInvalidLocation(int x, int y)
-    // {
-    //     var location = Location.Create(x, y);
-
-    //     location.IsSuccess.Should().BeFalse();
-    //     location.Error.Should().NotBeNull();
-    // }
-
-    // [Theory]
-    // [MemberData(nameof(GetValidLocations))]
-    // public void CompareLocations(int x, int y)
-    // {
-    //     var location1 = Location.Create(x, y).Value;
-    //     var location2 = Location.Create(x, y).Value;
-
-    //     var result = location1 == location2;
-    //     result.Should().BeTrue();
-    // }
-    
-    // [Theory]
-    // [MemberData(nameof(GetLocationsForDistance))]
-    // public void ReturnDistanceBetweenTwoLocations(Location anotherLocation, int distance)
-    // {
-    //     var location = Location.Create(1, 1).Value;
-    //     var result = location.DistanceTo(anotherLocation);
-
-    //     result.IsSuccess.Should().BeTrue();
-    //     result.Value.Should().Be(distance);
-    // }
-
-    // [Fact]
-    // public void CreateRandomLocation()
-    // {
-    //     var location = Location.CreateRandom();
-
-    //     location.X.Should().BeInRange(Location.MinLocation.X, Location.MaxLocation.Y);
-    //     location.Y.Should().BeInRange(Location.MinLocation.X, Location.MaxLocation.Y);
-    // }
+        storage.CanStore(5).IsSuccess.Should().BeTrue();
+        storage.CanStore(10).IsSuccess.Should().BeTrue();
+        storage.CanStore(11).IsSuccess.Should().BeTrue();
+    }
 }

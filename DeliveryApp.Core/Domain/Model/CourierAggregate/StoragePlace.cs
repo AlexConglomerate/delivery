@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using DeliveryApp.Core.Domain.Model.CourierAggregate;
 using CSharpFunctionalExtensions;
 using Primitives;
 
@@ -15,11 +14,11 @@ public class StoragePlace : Entity<Guid>
     {
     }
 
-    private StoragePlace(string name, int totalVolume) : this()
+    private StoragePlace(string name, int volume) : this()
     {
         Id = Guid.NewGuid();
         Name = name;
-        TotalVolume = totalVolume;
+        TotalVolume = volume;
     }
 
     public string Name { get; private set; }
@@ -32,5 +31,40 @@ public class StoragePlace : Entity<Guid>
         if (volume <= 0) return GeneralErrors.ValueIsInvalid(nameof(volume));
 
         return new StoragePlace(name, volume);
+    }
+
+    /// <summary>
+    ///     Занято ли?
+    /// </summary>
+    /// <returns>Да/Нет</returns>
+    private bool IsOccupied()
+    {
+        return OrderId != null;
+    }
+
+    public Result<bool, Error> CanStore(int volume)
+    {
+        if (volume <= 0) return GeneralErrors.ValueIsRequired(nameof(volume));
+
+        if (IsOccupied()) return false;
+        if (volume > TotalVolume) return false;
+
+        return true;
+    }
+
+    [ExcludeFromCodeCoverage]
+    public static class Errors
+    {
+        public static Error ErrCannotStoreOrderInThisStoragePlace()
+        {
+            return new Error($"{nameof(StoragePlace).ToLowerInvariant()}.cannot.store.order.in.this.storage.place",
+                "Нельзя поместить заказ в это место хранения");
+        }
+
+        public static Error ErrOrderNotStoredInThisPlace()
+        {
+            return new Error($"{nameof(StoragePlace).ToLowerInvariant()}.order.is.not.stored.in.this.place",
+                "В месте хранения нет заказа, который пытаются извлечь");
+        }
     }
 }
