@@ -3,6 +3,9 @@ using Xunit;
 using DeliveryApp.Core.Domain.Model.CourierAggregate;
 using System.Collections.Generic;
 using System;
+using System.Linq;
+using System.Reflection;
+using CSharpFunctionalExtensions;
 
 namespace DeliveryApp.UnitTests.Domain.Model.CourierAggregate;
 
@@ -21,6 +24,20 @@ public class CourierAggregateShould
         yield return ["", 10];
         yield return ["bagazhnik", 0];
         yield return ["bagazhnik", -1];
+    }
+
+    [Fact]
+    public void DerivedEntity()
+    {
+        var isDerivedEntity = typeof(StoragePlace).IsSubclassOf(typeof(Entity<Guid>));
+        isDerivedEntity.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ConstructorShouldBePrivate()
+    {
+        var typeInfo = typeof(StoragePlace).GetTypeInfo();
+        typeInfo.DeclaredConstructors.All(x => x.IsPrivate).Should().BeTrue();
     }
 
     [Theory]
@@ -53,7 +70,7 @@ public class CourierAggregateShould
 
         storage.CanStore(5).Value.Should().BeTrue();
         storage.CanStore(10).Value.Should().BeTrue();
-        
+
         storage.CanStore(11).Value.Should().BeFalse();
     }
 
