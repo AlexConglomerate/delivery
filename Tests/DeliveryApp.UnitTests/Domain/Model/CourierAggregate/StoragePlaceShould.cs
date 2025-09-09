@@ -10,14 +10,14 @@ namespace DeliveryApp.UnitTests.Domain.Model.StoragePlace;
 
 public class StoragePlaceShould
 {
-    public static IEnumerable<object[]> GetValidLocations()
+    public static IEnumerable<object[]> GetValidStoragePlace()
     {
         yield return ["bagazhnik", 1];
         yield return ["ryukzak", 10];
         yield return ["sumka", 100];
     }
 
-    public static IEnumerable<object[]> GetInvalidLocations()
+    public static IEnumerable<object[]> GetInvalidStoragePlace()
     {
         yield return [null, 10];
         yield return ["", 10];
@@ -40,7 +40,7 @@ public class StoragePlaceShould
     }
 
     [Theory]
-    [MemberData(nameof(GetValidLocations))]
+    [MemberData(nameof(GetValidStoragePlace))]
     public void CreateValidStoragePlace(string name, int volume)
     {
         var storage = Core.Domain.Model.StoragePlace.StoragePlace.Create(name, volume).Value;
@@ -50,7 +50,7 @@ public class StoragePlaceShould
     }
 
     [Theory]
-    [MemberData(nameof(GetInvalidLocations))]
+    [MemberData(nameof(GetInvalidStoragePlace))]
     public void CreateInValidStoragePlace(string name, int volume)
     {
         var storage = Core.Domain.Model.StoragePlace.StoragePlace.Create(name, volume);
