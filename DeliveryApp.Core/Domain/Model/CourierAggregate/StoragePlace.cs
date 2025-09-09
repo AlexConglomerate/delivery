@@ -52,6 +52,27 @@ public class StoragePlace : Entity<Guid>
         return true;
     }
 
+    public UnitResult<Error> Store(int volume, Guid orderId)
+    {
+        if (volume <= 0) return GeneralErrors.ValueIsRequired(nameof(volume));
+        if (orderId == Guid.Empty) return GeneralErrors.ValueIsRequired(nameof(orderId));
+        if (IsOccupied()) return Errors.ErrCannotStoreOrderInThisStoragePlace();
+
+        if (CanStore(volume).Value == false) return Errors.ErrCannotStoreOrderInThisStoragePlace();
+
+        OrderId = orderId;
+        return UnitResult.Success<Error>();
+    }
+
+    public UnitResult<Error> Clear(Guid orderId)
+    {
+        if (OrderId == Guid.Empty) return GeneralErrors.ValueIsRequired(nameof(orderId));
+        if (OrderId != orderId) return Errors.ErrOrderNotStoredInThisPlace();
+
+        OrderId = null;
+        return UnitResult.Success<Error>();
+    }
+
     [ExcludeFromCodeCoverage]
     public static class Errors
     {
