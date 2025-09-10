@@ -33,8 +33,9 @@ public sealed class Courier : Aggregate<Guid>
         if (speed <= 0) return GeneralErrors.ValueIsInvalid(nameof(speed));
         if (location == null) return GeneralErrors.ValueIsRequired(nameof(location));
 
-        var storage = StoragePlace.Create("Сумка", 10).Value;
+        var storage = StoragePlace.Create("Сумка", 10);
+        if (storage.IsFailure) return storage.Error;
 
-        return new Courier(name, speed, location, storage);
+        return new Courier(name, speed, location, storage.Value);
     }
 }
