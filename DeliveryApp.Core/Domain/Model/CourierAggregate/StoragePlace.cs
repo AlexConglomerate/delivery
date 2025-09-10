@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using CSharpFunctionalExtensions;
 using Primitives;
 
-namespace DeliveryApp.Core.Domain.Model.StoragePlace;
+namespace DeliveryApp.Core.Domain.Model.StoragePlaces;
 
 /// <summary>
 ///     Место хранения курьера (рюкзак, багажник и т.п.)
