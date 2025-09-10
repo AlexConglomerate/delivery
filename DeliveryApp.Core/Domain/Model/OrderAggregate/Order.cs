@@ -74,7 +74,7 @@ public sealed class Order : Aggregate<Guid>
     /// </summary>
     /// <param name="courier">Курьер</param>
     /// <returns>Результат</returns>
-    public UnitResult<Error> Assign(Courier courier)
+    public UnitResult<Error> Assign(CourierAggregate.Courier courier)
     {
         if (courier == null) return GeneralErrors.ValueIsRequired(nameof(courier));
         if (Status != OrderStatus.Created) return Errors.ErrCantAssignAlreadyAssignedOrder(courier.Id);
