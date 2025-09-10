@@ -58,4 +58,14 @@ public sealed class Courier : Aggregate<Guid>
         }
         return false;
     }
+
+    public Result<bool, Error> TakeOrder(Order order)
+    {
+        foreach (var storage in StoragePlaces)
+        {
+            var canStore = storage.CanStore(order.Volume);
+            if (canStore.Value == false) continue;
+        }
+        return false;
+    }
 }

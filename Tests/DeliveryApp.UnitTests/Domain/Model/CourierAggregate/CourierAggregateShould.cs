@@ -80,10 +80,20 @@ public class CourierAggregateShould
         var order = Order.Create(Guid.NewGuid(), Location.Create(2, 2).Value, 20).Value;
 
         var canTakeOrder_expectNot = courier.CanTakeOrder(order);
-        canTakeOrder_expectNot.Value.Should().BeFalse();
+        canTakeOrder_expectNot.Value.Should().BeFalse(); // сейчас курьер может взять только объем 10
 
         courier.AddStoragePlace("ryukzak", 30).IsSuccess.Should().BeTrue();
         var canTakeOrder = courier.CanTakeOrder(order);
         canTakeOrder.Value.Should().BeTrue();
+    }
+
+    [Fact]
+    public void TakeOrder()
+    {
+        var courier = Courier.Create("Vasya", 1, Location.Create(1, 1).Value).Value;
+
+        var order = Order.Create(Guid.NewGuid(), Location.Create(2, 2).Value, 5).Value;
+        var takeOrder = courier.TakeOrder(order);
+        takeOrder.Value.Should().BeTrue();
     }
 }
