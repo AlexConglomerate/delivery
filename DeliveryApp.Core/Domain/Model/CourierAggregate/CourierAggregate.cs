@@ -4,6 +4,7 @@ using CSharpFunctionalExtensions;
 using DeliveryApp.Core.Domain.Model.SharedKernel;
 using DeliveryApp.Core.Domain.Model.StoragePlaces;
 using DeliveryApp.Core.Domain.Model.OrderAggregate;
+using System.Runtime.CompilerServices;
 
 namespace DeliveryApp.Core.Domain.Model.CourierAggregate;
 
@@ -64,8 +65,23 @@ public sealed class Courier : Aggregate<Guid>
         foreach (var storage in StoragePlaces)
         {
             var canStore = storage.CanStore(order.Volume);
-            if (canStore.Value == false) continue;
+            if (canStore.Value == true)
+            {
+                storage.Store(order.Volume, order.Id);
+                return true;
+            }
         }
         return false;
+    }
+
+    public UnitResult<Error> CompleteOrder(Order order)
+    {
+        if (order is null) return GeneralErrors.ValueIsRequired(nameof(order));
+
+        var storage = StoragePlaces.FirstOrDefault(s => s.OrderId == order.Id);
+        if (storage is null) return GeneralErrors.ValueIsRequired(nameof(storage));
+
+        var clearResult = storage.Clear(order.Id);
+        return clearResult;
     }
 }

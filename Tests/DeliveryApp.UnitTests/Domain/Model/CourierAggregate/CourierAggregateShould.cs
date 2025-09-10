@@ -91,9 +91,25 @@ public class CourierAggregateShould
     public void TakeOrder()
     {
         var courier = Courier.Create("Vasya", 1, Location.Create(1, 1).Value).Value;
+        var order = Order.Create(Guid.NewGuid(), Location.Create(2, 2).Value, 5).Value;
+        var takeOrder = courier.TakeOrder(order);
 
+        takeOrder.Value.Should().BeTrue();
+    }
+
+    [Fact]
+    public void CompleteOrder()
+    {
+        var courier = Courier.Create("Vasya", 1, Location.Create(1, 1).Value).Value;
         var order = Order.Create(Guid.NewGuid(), Location.Create(2, 2).Value, 5).Value;
         var takeOrder = courier.TakeOrder(order);
         takeOrder.Value.Should().BeTrue();
+
+        var completeOrder = courier.CompleteOrder(order);
+        completeOrder.IsSuccess.Should().BeTrue();
+
+        var fakeOrder = Order.Create(Guid.NewGuid(), Location.Create(2, 2).Value, 5).Value;
+        var completeOrder_err = courier.CompleteOrder(fakeOrder);
+        completeOrder_err.IsFailure.Should().BeTrue();
     }
 }
