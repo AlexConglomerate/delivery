@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using DeliveryApp.Core.Domain.Model.CourierAggregate;
 using DeliveryApp.Core.Domain.Model.SharedKernel;
+using DeliveryApp.Core.Domain.Model.OrderAggregate;
 using Primitives;
 
 namespace DeliveryApp.UnitTests.Domain.Model.CourierAggregates;
@@ -70,5 +71,19 @@ public class CourierAggregateShould
         courier.AddStoragePlace("ryukzak", 5).IsSuccess.Should().BeTrue();
 
         courier.StoragePlaces.Count.Should().Be(2);
+    }
+
+    [Fact]
+    public void CanTakeOrder()
+    {
+        var courier = Courier.Create("Vasya", 1, Location.Create(1, 1).Value).Value;
+        var order = Order.Create(Guid.NewGuid(), Location.Create(2, 2).Value, 20).Value;
+
+        var canTakeOrder_expectNot = courier.CanTakeOrder(order);
+        canTakeOrder_expectNot.Value.Should().BeFalse();
+
+        courier.AddStoragePlace("ryukzak", 30).IsSuccess.Should().BeTrue();
+        var canTakeOrder = courier.CanTakeOrder(order);
+        canTakeOrder.Value.Should().BeTrue();
     }
 }
