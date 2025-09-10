@@ -4,7 +4,6 @@ using CSharpFunctionalExtensions;
 using DeliveryApp.Core.Domain.Model.SharedKernel;
 using DeliveryApp.Core.Domain.Model.StoragePlaces;
 using DeliveryApp.Core.Domain.Model.OrderAggregate;
-using System.Runtime.CompilerServices;
 
 namespace DeliveryApp.Core.Domain.Model.CourierAggregate;
 
@@ -24,10 +23,17 @@ public sealed class Courier : Aggregate<Guid>
         StoragePlaces.Add(storage);
     }
 
-    public string Name { get; private set; } /// <summary> Идентификатор курьера </summary>
-    public int Speed { get; private set; } /// <summary> Скорость курьера </summary>
-    public Location Location { get; private set; } /// <summary> Местоположение курьера </summary>
-    public List<StoragePlace> StoragePlaces { get; private set; } = new(); /// <summary> Места хранения курьера </summary>
+    /// <summary> Идентификатор курьера </summary>
+    public string Name { get; private set; }
+
+    /// <summary> Скорость курьера </summary>
+    public int Speed { get; private set; }
+
+    /// <summary> Местоположение курьера </summary>
+    public Location Location { get; private set; }
+    
+     /// <summary> Места хранения курьера </summary>
+    public List<StoragePlace> StoragePlaces { get; private set; } = new();
 
     public static Result<Courier, Error> Create(string name, int speed, Location location)
     {
@@ -83,5 +89,37 @@ public sealed class Courier : Aggregate<Guid>
 
         var clearResult = storage.Clear(order.Id);
         return clearResult;
+    }
+
+    public Result<double, Error> CalculateTimeToLocation(Location location)
+    {
+        if (location == null) return GeneralErrors.ValueIsRequired(nameof(location));
+
+        var distanceToResult = Location.DistanceTo(location);
+        if (distanceToResult.IsFailure) return distanceToResult.Error;
+        var distance = distanceToResult.Value;
+
+        var time = (double)distance / Speed;
+        return time;
+    }
+
+    public UnitResult<Error> Move(Location target)
+    {
+        if (target == null) return GeneralErrors.ValueIsRequired(nameof(target));
+
+        var difX = target.X - Location.X;
+        var difY = target.Y - Location.Y;
+        var cruisingRange = Speed;
+
+        var moveX = Math.Clamp(difX, -cruisingRange, cruisingRange);
+        cruisingRange -= Math.Abs(moveX);
+
+        var moveY = Math.Clamp(difY, -cruisingRange, cruisingRange);
+
+        var locationCreateResult = Location.Create(Location.X + moveX, Location.Y + moveY);
+        if (locationCreateResult.IsFailure) return locationCreateResult.Error;
+        Location = locationCreateResult.Value;
+
+        return UnitResult.Success<Error>();
     }
 }
