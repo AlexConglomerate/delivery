@@ -62,4 +62,13 @@ public class CourierAggregateShould
         courier.IsSuccess.Should().BeFalse();
         courier.Error.Should().NotBeNull();
     }
+
+    [Fact]
+    public void AddStoragePlace()
+    {
+        var courier = Courier.Create("Vasya", 1, Location.Create(1, 1).Value).Value;
+        courier.AddStoragePlace("ryukzak", 5).IsSuccess.Should().BeTrue();
+
+        courier.StoragePlaces.Count.Should().Be(2);
+    }
 }

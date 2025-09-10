@@ -38,4 +38,13 @@ public sealed class Courier : Aggregate<Guid>
 
         return new Courier(name, speed, location, storage.Value);
     }
+
+    public UnitResult<Error> AddStoragePlace(string name, int volume)
+    {
+        var storage = StoragePlace.Create(name, volume);
+        if (storage.IsFailure) return storage.Error;
+
+        StoragePlaces.Add(storage.Value);
+        return UnitResult.Success<Error>();
+    }
 }
