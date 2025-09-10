@@ -46,7 +46,7 @@ public class StoragePlaceShould
         var storage = Core.Domain.Model.StoragePlaces.StoragePlace.Create(name, volume).Value;
 
         storage.Name.Should().Be(name);
-        storage.TotalVolume.Should().Be(volume);
+        storage.Volume.Should().Be(volume);
     }
 
     [Theory]

@@ -18,11 +18,11 @@ public class StoragePlace : Entity<Guid>
     {
         Id = Guid.NewGuid();
         Name = name;
-        TotalVolume = volume;
+        Volume = volume;
     }
 
     public string Name { get; private set; }
-    public int TotalVolume { get; private set; }
+    public int Volume { get; private set; }
     public Guid? OrderId { get; private set; }
 
     public static Result<StoragePlace, Error> Create(string name, int volume)
@@ -44,7 +44,7 @@ public class StoragePlace : Entity<Guid>
         if (volume <= 0) return GeneralErrors.ValueIsRequired(nameof(volume));
 
         if (IsOccupied()) return false;
-        if (volume > TotalVolume) return false;
+        if (volume > Volume) return false;
 
         return true;
     }
